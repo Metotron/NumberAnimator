@@ -69,13 +69,12 @@
 
 class NumberAnimator {
 	constructor(options) {
-		try
-		{
+		try {
 			/* **** */
-			this.time                = 300       //Изменяем целевое число в течение секунды
-			this.steps               = 'auto'    //За это время указанное число итераций или auto — 50 изменений в секнду
-			this.useFractional       = false     //Округляем дробные промежуточные значения
-			this.fractionalPrecision = 2         //Если не округляем, то отображаем 2 знака после запятой
+			this.time                = 300       // Изменяем целевое число в течение секунды
+			this.steps               = 'auto'    // Число итераций за time вмемени или auto — 50 штук
+			this.useFractional       = false     // Округляем дробные промежуточные значения
+			this.fractionalPrecision = 2         // Если не округляем, то отображаем 2 знака после запятой
 			/* **** */
 
 			if (options == undefined || options.constructor.name != 'Object')
@@ -92,25 +91,21 @@ class NumberAnimator {
 				throw `Не найден элемент ${this.element}`
 
 			//Если есть параметр со стартовым значением в options, применяем его
-			if ('startValue' in options)
-			{
+			if ('startValue' in options) {
 				this.value = parseFloat(options.startValue)
 				this.element.textContent = this.value
 			}
-			else
-			{
+			else {
 				//Ищем начальное значение внутри самого элемента в DOM
 				const elementValue = parseFloat(this.element.textContent)
 				this.value = isNaN(elementValue) ? undefined : elementValue
 			}
 
-			if (this.value == undefined)
-			{
+			if (this.value == undefined) {
 				throw 'Конструктору не передано обязательное значение startValue'
 			}
 		}
-		catch (err)
-		{
+		catch (err) {
 			console.error(`NumberAnimator: ${err}`)
 			if (NumberAnimator.enableDebugger) debugger
 		}
@@ -118,13 +113,11 @@ class NumberAnimator {
 
 	/* Функция смены числа */
 	toValue(parameter) {
-		try
-		{
+		try {
 			this.stop()
 
 			let to
-			switch (parameter.constructor.name)
-			{
+			switch (parameter.constructor.name) {
 				case 'Object':
 					if (!parameter.to)
 						throw 'Параметр функции должен содержать обязательный ключ to'
@@ -154,14 +147,13 @@ class NumberAnimator {
 			if (isNaN(to))
 				throw `Функции передано некорректное новое значение числа: ${to}`
 
-			//Рассчитаем все параметры для совершения анимации и иницализируем переменные
+			// Рассчитаем все параметры для совершения анимации и иницализируем переменные
 			let siInterval = this.steps == 'auto' ? 50 : Math.round(this.time / this.steps)
 			if (siInterval < 0)
 				siInterval = 50
 			this.endValue = to
 
-			if (to != this.value)
-			{
+			if (to != this.value) {
 				this.addition = to - this.value
 				if (this.steps != 'auto')
 					this.addition /= this.steps
@@ -171,8 +163,7 @@ class NumberAnimator {
 				this.interval = setInterval(() => { this.run.call(this) }, siInterval)
 			}
 		}
-		catch (err)
-		{
+		catch (err) {
 			console.error(`NumberAnimator.toValue(): ${err}`)
 			if (NumberAnimator.enableDebugger) debugger
 			return false
@@ -185,8 +176,7 @@ class NumberAnimator {
 	setParam(options) {
 		if (options.constructor.name != 'Object')
 			console.error('NumberAnimator.setParam(): параметр должен быть объектом');
-		else
-		{
+		else {
 			if (options.time)
 				this.time = parseInt(parameter.time)
 			if (this.time < 1)
@@ -223,17 +213,15 @@ class NumberAnimator {
 		let drawValue = this.value
 		if (!this.useFractional)
 			drawValue = Math.round(drawValue)
-		else
-		{
+		else {
 			const step = Math.pow(10, this.fractionalPrecision)
 			drawValue = Math.round(this.value * step) / step
 		}
 
 		if (this.addition > 0 && this.value >= this.endValue
-		   || this.addition < 0 && this.value <= this.endValue)
-		{
-			this.end.call(this)
-			return
+			|| this.addition < 0 && this.value <= this.endValue) {
+				this.end.call(this)
+				return
 		}
 
 		this.element.textContent = drawValue
